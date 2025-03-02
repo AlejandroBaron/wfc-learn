@@ -101,7 +101,7 @@ void Wavefunction::collapse(int x, int y) {
     }
 
     // Randomly choose a tile based on the weights
-    float rnd = noise();
+    float rnd = noise()*total_weights;
 
     Tile chosen = filtered_tiles_with_weights[0].first;
     for (const auto& [tile, weight] : filtered_tiles_with_weights) {
