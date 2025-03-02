@@ -61,10 +61,8 @@ World convertToTileMatrix(const RawInput& charMatrix) {
 
 RawInput convertToCharMatrix(const std::vector<std::vector<Tile>>& tileMatrix) {
     int rows = tileMatrix.size();
-    std:: cout << rows ;
     int cols = tileMatrix[0].size();
     
-    std:: cout << rows ;
     RawInput charMatrix(rows, std::vector<char>(cols));
 
     for (int i = 0; i < rows; ++i) {
@@ -171,7 +169,6 @@ int main() {
     RawInput input = {
         {'L','L','L','L'},
         {'L','L','L','L'},
-        {'L','L','L','L'},
         {'L','C','C','L'},
         {'C','S','S','C'},
         {'S','S','S','S'},
@@ -226,10 +223,9 @@ int main() {
     std::cout <<"# Iter: " << niter << std::endl;
 
     World generation = wf.get_all_collapsed();
-    // std:: cout << "in";
-    // RawInput parsed_gen = convertToCharMatrix(generation);
-    // std:: cout << "in";
-    // prettyPrintMatrix(parsed_gen);
+
+    RawInput parsed_gen = convertToCharMatrix(generation);
+    prettyPrintMatrix(parsed_gen);
 
     
 

@@ -1,6 +1,6 @@
 # Compiler and flags
 CXX=g++# The C++ compiler
-CXXFLAGS=-Wall -std=c++17  # Compiler flags (enable all warnings and use C++17 standard)
+CXXFLAGS=-g -Wall -std=c++17  # Compiler flags (enable all warnings and use C++17 standard)
 
 # Directories
 SRC_DIR=src
@@ -16,12 +16,12 @@ all: clean $(TARGET) run
 
 # Rule to create the target executable
 $(TARGET): $(OBJ_FILES)
-	$(CXX) $(OBJ_FILES) -o $(TARGET) -I$(INC_DIR) # Link object files to create the executable
+	$(CXX) $(OBJ_FILES) -o $(TARGET) -I $(INC_DIR) # Link object files to create the executable
 
 # Rule to compile .cpp files into .o object files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)  # Create build directory if it doesn't exist
-	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@  # Compile each source file
+	$(CXX) $(CXXFLAGS) -I $(INC_DIR) -c $< -o $@  # Compile each source file
 
 # Clean rule to remove build files
 clean:
@@ -32,4 +32,4 @@ run: $(TARGET)
 	./$(TARGET)
 
 # Phony targets to avoid conflicts with file names
-.PHONY: all clean run
+.PHONY: all clean

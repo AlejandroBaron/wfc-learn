@@ -43,14 +43,12 @@ Tile Wavefunction::get_collapsed(int x, int y) {
 // Method to get the entire collapsed matrix
 World Wavefunction::get_all_collapsed() {
 
-    std::cout << "in3";
     size_t height = coefficient_matrix.size();
     size_t width = coefficient_matrix[0].size();
-    std::cout << "in";
     World collapsed(height, std::vector<Tile>(width));
 
-    for (size_t y = 0; y < height; ++y) {
-        for (size_t x = 0; x < width; ++x) {
+    for (size_t x = 0; x < height; ++x) {
+        for (size_t y = 0; y < width; ++y) {
             collapsed[x][y] = get_collapsed(x, y);
         }
     }
