@@ -168,7 +168,6 @@ void propagate(int x, int y, Wavefunction& wf, BuildRules& build_rules, const Si
 int main() {
     RawInput input = {
         {'L','L','L','L'},
-        {'L','L','L','L'},
         {'L','C','C','L'},
         {'C','S','S','C'},
         {'S','S','S','S'},
@@ -204,15 +203,16 @@ int main() {
         std::cout << pair.first << " => " << pair.second << std::endl;
     }
 
-    CoefMatrix coef_matrix = getCoefMatrix(matrix_height, matrix_width);
-
+    CoefMatrix coef_matrix = getCoefMatrix(matrix_height*4, matrix_width*4);
+    coef_matrix[0][0] = {L};
     Wavefunction wf(coef_matrix,weights);
 
-    // Find min entropy coords
-
     int niter = 0;
-    while (!wf.is_fully_collapsed()){
 
+
+    while (!wf.is_fully_collapsed()){
+   
+        // Find min entropy coords
         Coordinate min_entropy = min_entropy_coords(wf);
         // Collapse
         wf.collapse(min_entropy.x, min_entropy.y);
@@ -220,7 +220,7 @@ int main() {
         propagate(min_entropy.x, min_entropy.y, wf, build_rules, {16,16});
         ++niter;
     }
-    std::cout <<"# Iter: " << niter << std::endl;
+    std::cout << "# Iter: " << niter << std::endl;
 
     World generation = wf.get_all_collapsed();
 
