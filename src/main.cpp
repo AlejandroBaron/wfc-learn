@@ -33,7 +33,7 @@ int main(int argc, char *argv[]){
     int gen_size = 16;
     pprint_input(input);
     
-    World world = world2input(input);
+    World world = input2world(input);
 
     // Create a vector to store the collection of build_rules
 
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]){
 
     World generation = wf.get_all_collapsed();
 
-    RawInput parsed_gen = input2world(generation);
+    RawInput parsed_gen = world2input(generation);
     pprint_input(parsed_gen);
     return 0;
 }

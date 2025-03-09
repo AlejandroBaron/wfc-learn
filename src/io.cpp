@@ -26,7 +26,7 @@ void pprint_input(const RawInput& matrix) {
 }
 
 
-World world2input(const RawInput& raw_input){
+World input2world(const RawInput& raw_input){
     int rows = raw_input.size();
     int cols = raw_input[0].size();
     
@@ -42,7 +42,7 @@ World world2input(const RawInput& raw_input){
 }
 
 
-RawInput input2world(const World& world) {
+RawInput world2input(const World& world) {
     int rows = world.size();
     int cols = world[0].size();
     

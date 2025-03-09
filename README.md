@@ -5,6 +5,9 @@ Learning about the Wave Function Collapse algorithm.
 
 ## References
 
+- Robert Heaton's blog post: [Link](https://robertheaton.com/2018/12/17/wavefunction-collapse-algorithm/)
+- The original repo: [Link](https://github.com/mxgmn/WaveFunctionCollapse)
+
 ### How to run
 
 

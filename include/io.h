@@ -11,8 +11,8 @@
 
 
 void pprint_input(const RawInput& matrix);
-World world2input(const RawInput& charMatrix);
-RawInput input2world(const World& world);
+World input2world(const RawInput& charMatrix);
+RawInput world2input(const World& world);
 RawInput read_input(const std::string &filename);
 void pprint_coefmatrix(const CoefMatrix& coefMatrix);
 
