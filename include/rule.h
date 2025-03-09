@@ -7,18 +7,8 @@
 #include <vector>
 
 #include "tile.h"
+#include "direction.h"
 
-struct Direction {
-    int x;
-    int y;
-    Direction(int x, int y);
-
-
-    bool operator==(const Direction& other) const {
-        return x == other.x && y == other.y;
-    }
-    
-};
 struct BuildRule {
     Tile tile1;
     Tile tile2;
@@ -26,6 +16,9 @@ struct BuildRule {
 
     // Constructor to initialize the BuildRule
     BuildRule(Tile tile1, Tile tile2, const Direction rule);
+
+    BuildRule x_flip() const;
+    BuildRule y_flip() const;
 
     // Implementing comparison makes suitable for sets
     bool operator< (const BuildRule& other) const {
@@ -36,7 +29,5 @@ struct BuildRule {
 };
 
 
-extern std::vector<Direction> valid_directions;
-std::ostream& operator<<(std::ostream& os, const Direction& dir);
 
 #endif // RULE_H

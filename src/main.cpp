@@ -117,7 +117,7 @@ Coordinate min_entropy_coords(Wavefunction& wf){
 
 
 
-void propagate(int x, int y, Wavefunction& wf, BuildRules& build_rules, const Size& output_size) {
+void propagate(int x, int y, Wavefunction& wf, BuildRules& build_rules) {
     std::stack<std::pair<int, int>> stack;
 
     stack.push({x, y});  // Push the initial coordinate (x, y) to the stack
@@ -167,13 +167,15 @@ void propagate(int x, int y, Wavefunction& wf, BuildRules& build_rules, const Si
 
 int main() {
     RawInput input = {
-        {'L','L','L','L'},
-        {'L','C','C','L'},
-        {'C','S','S','C'},
-        {'S','S','S','S'},
-        {'S','S','S','S'},
+        {'L','L','L','L','L'},
+        {'L','C','C','L','L'},
+        {'C','S','S','C','C'},
+        {'S','S','S','S','S'},
     };
+    
+    int gen_size = 16;
     prettyPrintMatrix(input);
+    
     World matrix = convertToTileMatrix(input);
 
     // Create a vector to store the collection of build_rules
@@ -192,7 +194,10 @@ int main() {
                         int i2 = i + dir.x;
                         int j2 = j + dir.y;
                         Tile neighbour = matrix[i2][j2];
-                        build_rules.insert(BuildRule(tile, neighbour, dir));
+                        BuildRule rule(tile, neighbour, dir);
+                        build_rules.insert(rule);
+                        build_rules.insert(rule.x_flip());
+                        build_rules.insert(rule.y_flip());
                     
                 }
             }
@@ -203,8 +208,12 @@ int main() {
         std::cout << pair.first << " => " << pair.second << std::endl;
     }
 
-    CoefMatrix coef_matrix = getCoefMatrix(matrix_height*4, matrix_width*4);
-    coef_matrix[0][0] = {L};
+    for (const auto& rule: build_rules){
+        std::cout << rule.tile1 << " " << rule.tile2 << " " << rule.dir.as_str() << std::endl;
+    }
+
+    CoefMatrix coef_matrix = getCoefMatrix(gen_size, gen_size);
+    //coef_matrix[0][0] = {L};
     Wavefunction wf(coef_matrix,weights);
 
     int niter = 0;
@@ -217,7 +226,7 @@ int main() {
         // Collapse
         wf.collapse(min_entropy.x, min_entropy.y);
         // propagate
-        propagate(min_entropy.x, min_entropy.y, wf, build_rules, {16,16});
+        propagate(min_entropy.x, min_entropy.y, wf, build_rules);
         ++niter;
     }
     std::cout << "# Iter: " << niter << std::endl;

@@ -42,7 +42,7 @@ bool operator>=(Tile lhs, Tile rhs) {
     return !(lhs < rhs);
 }
 
-std::string to_string(Tile tile) {
+std::string tile2Char(Tile tile) {
     switch (tile) {
         case Tile::L: return "L";
         case Tile::C: return "C";
@@ -52,5 +52,5 @@ std::string to_string(Tile tile) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Tile& t) {
-    return os <<  to_string(t);
+    return os <<  tile2Char(t);
 }

@@ -19,7 +19,6 @@ bool operator>(Tile lhs, Tile rhs);
 bool operator<=(Tile lhs, Tile rhs);
 bool operator>=(Tile lhs, Tile rhs);
 
-std::string to_string(Tile tile);
 std::ostream& operator<<(std::ostream& os, const Tile& t);
 
 #endif
