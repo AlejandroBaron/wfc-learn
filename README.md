@@ -29,3 +29,5 @@ To build run everything in one go you can do
 ```bash
 make && ./wfc inputs/world.txt CONSTANT
 ```
+
+![WFC Example](docs/wfc.png)
