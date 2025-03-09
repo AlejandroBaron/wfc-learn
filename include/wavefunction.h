@@ -19,6 +19,8 @@ public:
      */
     Wavefunction(CoefMatrix coefficient_matrix, Weights weights);
 
+    CoefMatrix get_coef_matrix() const;
+
     /**
      * @brief Retrieves the coefficient at the specified row and column.
      *

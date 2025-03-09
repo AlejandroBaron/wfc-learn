@@ -14,7 +14,9 @@ Wavefunction::Wavefunction(CoefMatrix coefficient_matrix, Weights weights)
     : coefficient_matrix(coefficient_matrix), weights(weights) {}
 
 
-
+CoefMatrix Wavefunction::get_coef_matrix() const {
+    return coefficient_matrix;
+}
 
 Coefficient Wavefunction::get_coef(int x, int y) const{
     return coefficient_matrix[x][y];

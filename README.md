@@ -21,3 +21,8 @@ Then
 Mode can be one of the following:
 - WEIGHTED: The algorithm will consider the weights of the tiles equal to the total count in the sample.
 - CONSTANT: The algorithm will consider the weights of the tiles equal to 1.
+
+To build run everything in one go you can do
+```bash
+make && ./wfc inputs/world.txt CONSTANT
+```

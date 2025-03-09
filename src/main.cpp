@@ -24,7 +24,6 @@ CoefMatrix init_coef_matrix(int x, int y) {
     return matrix;
 }
 
-
 int main(int argc, char *argv[]){
     std::string world_file = argv[1];
     std::string mode = (argc > 2) ? argv[2] : "WEIGHTED";
@@ -39,15 +38,15 @@ int main(int argc, char *argv[]){
     // Create a vector to store the collection of build_rules
 
     Weights weights;
-    int matrix_height = world.size();
-    int matrix_width = world[0].size();
+    int world_h = world.size();
+    int world_w = world[0].size();
 
     BuildRules build_rules;
-    for (int i = 0; i < matrix_height; ++i) {
-            for (int j = 0; j < matrix_width; ++j) {
+    for (int i = 0; i < world_h; ++i) {
+            for (int j = 0; j < world_w; ++j) {
                 Tile tile = world[i][j];
                 weights[tile] = (mode=="CONSTANT") ? 1 : weights[tile] + 1;
-                auto in_bound_directions = get_in_bound_directions(i, j, matrix_height, matrix_width);
+                auto in_bound_directions = get_in_bound_directions(i, j, world_h, world_w);
                 for (const Direction& dir : in_bound_directions){
                         int i2 = i + dir.x;
                         int j2 = j + dir.y;
@@ -61,22 +60,20 @@ int main(int argc, char *argv[]){
             }
     }
 
-    std:: cout << "Counts" << std::endl;
+    std::cout << "Counts" << std::endl;
     for (const auto& pair : weights) {
         std::cout << pair.first << " => " << pair.second << std::endl;
     }
 
+    std::cout << "Rules" << std::endl;
     for (const auto& rule: build_rules){
         std::cout << rule.tile1 << " " << rule.tile2 << " " << rule.dir.as_str() << std::endl;
     }
 
     CoefMatrix coef_matrix = init_coef_matrix(gen_size, gen_size);
-    //coef_matrix[0][0] = {L};
     Wavefunction wf(coef_matrix,weights);
 
     int niter = 0;
-
-
     while (!wf.is_fully_collapsed()){
    
         // Find min entropy coords
@@ -93,8 +90,5 @@ int main(int argc, char *argv[]){
 
     RawInput parsed_gen = input2world(generation);
     pprint_input(parsed_gen);
-
-    
-
     return 0;
 }

@@ -81,3 +81,22 @@ RawInput read_input(const std::string &filename){
     file.close();
     return input;
 }
+
+void pprint_coefmatrix(const CoefMatrix& coefMatrix) {
+    for (const auto& row : coefMatrix) {
+        for (const auto& coef : row) {
+            
+            bool not_collapsed = coef.size() != 1;
+            if (not_collapsed) std::cout << "["; // Opening bracket
+            
+            for (const auto& tile : coef) {
+                char tilechar = tile2char(tile);    
+                std::cout << PALETTE.at(tilechar) << tile << " \033[0m";
+            }
+            if (not_collapsed) std::cout << "]"; // Closing bracket and tab
+        }
+
+        std::cout << "\n"; // Newline after each row
+    }
+    std::cout << std::endl; // Extra newline at the end
+}
