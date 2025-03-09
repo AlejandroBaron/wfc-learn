@@ -8,41 +8,101 @@
 #include <random>
 #include "types.h"  // Assuming the required types are defined here
 #include "tile.h"
+
 class Wavefunction {
 public:
-    // Constructor
+    /**
+     * @brief Constructs a Wavefunction using a coefficient matrix and associated weights.
+     *
+     * @param coefficient_matrix The initial coefficient matrix.
+     * @param weights The weights for each tile type.
+     */
     Wavefunction(CoefMatrix coefficient_matrix, Weights weights);
 
-    // Getter
-    Coefficient get_coef(int x, int y);
+    /**
+     * @brief Retrieves the coefficient at the specified row and column.
+     *
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @return The coefficient located at (x, y).
+     */
+    Coefficient get_coef(int x, int y) const;
 
-    // Get height
-    int get_height();
+    /**
+     * @brief Returns the wavefunction's height.
+     *
+     * @return The number of rows in the coefficient matrix.
+     */
+    int get_height() const;
 
-    int get_width();
+    /**
+     * @brief Returns the wavefunction's width.
+     *
+     * @return The number of columns in the coefficient matrix.
+     */
+    int get_width() const;
 
+    /**
+     * @brief Retrieves the collapsed tile at the specified location.
+     *
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @return The tile that the wavefunction collapses to at (x, y).
+     */
+    Tile get_collapsed(int x, int y) const;
 
-    // Method to get the collapsed tile at a given position
-    Tile get_collapsed(int x, int y);
+    /**
+     * @brief Returns the entire collapsed matrix.
+     *
+     * @return A matrix of tiles representing the collapsed state.
+     */
+    World get_all_collapsed() const;
 
-    // Method to get the entire collapsed matrix
-    World get_all_collapsed();
+    /**
+     * @brief Calculates the Shannon entropy at the specified location.
+     *
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @return The Shannon entropy value at (x, y).
+     */
+    float shannon_entropy(int x, int y) const;
 
-    // Method to calculate the Shannon entropy for a given coordinate
-    float shannon_entropy(int x, int y);
+    /**
+     * @brief Checks if the wavefunction is fully collapsed.
+     *
+     * @return True if all positions have a single possible tile, false otherwise.
+     */
+    bool is_fully_collapsed() const;
 
-    // Method to check if the wavefunction is fully collapsed
-    bool is_fully_collapsed();
-
-    // Method to collapse the wavefunction at a given coordinate
+    /**
+     * @brief Collapses the wavefunction at the specified location.
+     *
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     */
     void collapse(int x, int y);
 
-    // Method to constrain the wavefunction by removing a forbidden tile at a given coordinate
+    /**
+     * @brief Constrains the wavefunction at (x, y) by removing a forbidden tile.
+     *
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @param forbidden_tile The tile to exclude at (x, y).
+     */
     void constrain(int x, int y, Tile forbidden_tile);
 
+
+    /**
+     * @brief Returns the coordinate with min entropy value.
+     *
+     */
+    Coordinate min_entropy_coords() const;
+
+    void propagate(int x, int y, BuildRules& build_rules);
+
 private:
-    CoefMatrix coefficient_matrix;  // The coefficient matrix
-    Weights weights;                       // The weight of each tile
+    CoefMatrix coefficient_matrix;
+    Weights weights;
 };
 
 #endif  // WAVEFUNCTION_H

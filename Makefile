@@ -12,7 +12,7 @@ SRC_FILES=$(wildcard $(SRC_DIR)/*.cpp)
 OBJ_FILES=$(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC_FILES))
 
 # Default rule to build the project
-all: clean $(TARGET) run
+all: clean $(TARGET)
 
 # Rule to create the target executable
 $(TARGET): $(OBJ_FILES)
@@ -29,7 +29,7 @@ clean:
 
 # Rule to run the program after building
 run: $(TARGET)
-	./$(TARGET)
+	./$(TARGET) $(ARGS)  # Run the program with optional arguments
 
 # Phony targets to avoid conflicts with file names
 .PHONY: all clean

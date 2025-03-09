@@ -8,8 +8,21 @@
 enum class Tile { L, C, S };
 
 // Function prototypes
+/**
+ * @brief Converts a character representation to a corresponding Tile object
+ * @param c The character to be converted into a Tile
+ * @return Tile The tile object corresponding to the input character
+ * @throws std::invalid_argument if the character does not correspond to a valid tile
+ */
 Tile charToTile(char c);
-char tileToChar(Tile t);
+
+/**
+ * @brief Converts a Tile enumeration value to its corresponding character representation
+ * 
+ * @param t The tile enumeration value to convert
+ * @return char The character representation of the tile
+ */
+char tile2char(Tile t);
 
 // Comparison operators declaration
 bool operator==(Tile lhs, Tile rhs);

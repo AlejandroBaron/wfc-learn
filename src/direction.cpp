@@ -10,8 +10,8 @@ Direction DOWN = Direction(1, 0);
 Direction LEFT = Direction(0, -1);
 Direction RIGHT = Direction(0, 1);
 
-// Declare valid_directions as a vector of Direction objects
-std::vector<Direction> valid_directions = {
+// Declare VALID_DIRECTIONS as a vector of Direction objects
+const std::vector<Direction> VALID_DIRECTIONS = {
     UP,    // UP
     DOWN,  // DOWN
     LEFT,  // LEFT
@@ -39,4 +39,17 @@ std::string Direction::as_str() const{
     
     return "INVALID"+dir_str;
     
+}
+
+std::vector<Direction> get_in_bound_directions(int x, int y, int h, int w) {
+    std::vector<Direction> result;
+    for (const Direction& dir : VALID_DIRECTIONS) {
+        int new_x = x + dir.x;
+        int new_y = y + dir.y;
+        bool in_bounds = (new_x >= 0 && new_x < h && new_y >= 0 && new_y < w);
+        if (in_bounds) {
+            result.push_back(dir);
+        }
+    }
+    return result;
 }

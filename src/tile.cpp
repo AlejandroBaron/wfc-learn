@@ -9,7 +9,7 @@ Tile charToTile(char c) {
     }
 }
 
-char tileToChar(Tile t) {
+char tile2char(Tile t) {
     switch (t) {
         case Tile::L: return 'L';
         case Tile::C: return 'C';

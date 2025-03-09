@@ -1,6 +1,9 @@
-#include "io.h"
 #include <iostream>
 #include <unordered_map>
+
+#include "io.h"
+#include "tile.h"
+#include "types.h"
 
 // ANSI color codes
 const std::unordered_map<char, std::string> PALETTE = {
@@ -9,7 +12,7 @@ const std::unordered_map<char, std::string> PALETTE = {
     {'C', "\033[33m"}, // Yellow
 };
 
-void prettyPrintMatrix(const std::vector<std::vector<char>>& matrix) {
+void pprint_input(const RawInput& matrix) {
     for (const auto& row : matrix) {
         for (char ch : row) {
             if (PALETTE.count(ch)) {
@@ -20,4 +23,61 @@ void prettyPrintMatrix(const std::vector<std::vector<char>>& matrix) {
         }
         std::cout << "\n";
     }
+}
+
+
+World world2input(const RawInput& raw_input){
+    int rows = raw_input.size();
+    int cols = raw_input[0].size();
+    
+    World tileMatrix(rows, std::vector<Tile>(cols));
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            tileMatrix[i][j] = charToTile(raw_input[i][j]); // Convert char to Tile enum
+        }
+    }
+
+    return tileMatrix;
+}
+
+
+RawInput input2world(const World& world) {
+    int rows = world.size();
+    int cols = world[0].size();
+    
+    RawInput raw_input(rows, std::vector<char>(cols));
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            raw_input[i][j] = tile2char(world[i][j]);
+        }
+    }
+
+    return raw_input;
+}
+
+
+RawInput read_input(const std::string &filename){
+    RawInput input;
+    std::ifstream file(filename);
+
+    if (!file) {
+        std::cerr << "Error opening file!" << std::endl;
+        exit(1);
+    }
+
+    std::string line;
+    while (getline(file, line)) {
+        std::stringstream ss(line);
+        std::vector<char> row;
+        char cell;
+        while (ss >> cell) {
+            row.push_back(cell);
+        }
+        input.push_back(row); 
+    }
+
+    file.close();
+    return input;
 }

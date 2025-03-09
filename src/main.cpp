@@ -1,13 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <set>
-#include <unordered_map>
-#include <random>
-#include <limits>
-#include <stack>
-#include <tuple>
 #include <algorithm>
-
 
 #include "io.h"
 #include "rule.h"
@@ -21,61 +15,9 @@ Tile L = Tile::L;
 Tile C = Tile::C;
 Tile S = Tile::S;
 
-struct Coordinate
-{
-    int x;
-    int y;
-};
 
-using BuildRules = std::set<BuildRule>;
-using Size = std::tuple<int,int>;
-using RawInput = std::vector<std::vector<char>>;
-
-std::vector<Direction> get_in_bound_directions(int x, int y, int h, int w) {
-    std::vector<Direction> result;
-    for (const Direction& dir : valid_directions) {
-        int new_x = x + dir.x;
-        int new_y = y + dir.y;
-        bool in_bounds = (new_x >= 0 && new_x < h && new_y >= 0 && new_y < w);
-        if (in_bounds) {
-            result.push_back(dir);
-        }
-    }
-    return result;
-}
-
-World convertToTileMatrix(const RawInput& charMatrix) {
-    int rows = charMatrix.size();
-    int cols = charMatrix[0].size();
-    
-    World tileMatrix(rows, std::vector<Tile>(cols));
-
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            tileMatrix[i][j] = charToTile(charMatrix[i][j]); // Convert char to Tile enum
-        }
-    }
-
-    return tileMatrix;
-}
-
-RawInput convertToCharMatrix(const std::vector<std::vector<Tile>>& tileMatrix) {
-    int rows = tileMatrix.size();
-    int cols = tileMatrix[0].size();
-    
-    RawInput charMatrix(rows, std::vector<char>(cols));
-
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            charMatrix[i][j] = tileToChar(tileMatrix[i][j]); // Convert Tile enum back to char
-        }
-    }
-
-    return charMatrix;
-}
-
-
-CoefMatrix getCoefMatrix(int x, int y) {
+// Init the matrix to all possible states
+CoefMatrix init_coef_matrix(int x, int y) {
 
     Coefficient all = {L,C,S};
     CoefMatrix matrix(x, std::vector<Coefficient> (y, all));
@@ -83,117 +25,33 @@ CoefMatrix getCoefMatrix(int x, int y) {
 }
 
 
-Coordinate min_entropy_coords(Wavefunction& wf){
+int main(int argc, char *argv[]){
+    std::string world_file = argv[1];
+    std::string mode = (argc > 2) ? argv[2] : "WEIGHTED";
 
-    int h = wf.get_height();
-    int w = wf.get_width();
-
-    std::set<BuildRule> build_rules;
-    float min_entropy = std::numeric_limits<float>::infinity();
-    int min_i = 0, min_j = 0;
-    for (int i = 0; i < h; ++i) {
-            for (int j = 0; j < w; ++j) {
-                int n_states = wf.get_coef(i,j).size();
-                if (n_states == 1){
-                    continue;
-                }
-
-                float entropy = wf.shannon_entropy(i,j);
-                entropy += noise() / 1000;
-                
-                if (entropy < min_entropy){
-                    min_entropy = entropy;
-                    min_i = i;
-                    min_j = j;
-                }
-
-
-        }
-    }
-
-    Coordinate cord = {min_i, min_j};
-    return cord;
-}
-
-
-
-void propagate(int x, int y, Wavefunction& wf, BuildRules& build_rules) {
-    std::stack<std::pair<int, int>> stack;
-
-    stack.push({x, y});  // Push the initial coordinate (x, y) to the stack
-
-    int wfh = wf.get_height();
-    int wfw = wf.get_width();
-
-    while (!stack.empty()) {
-        auto cur_coords = stack.top();
-        stack.pop();
-        int cur_x = cur_coords.first;
-        int cur_y = cur_coords.second;
-
-        // Get the possible tiles at the current location
-        auto cur_possible_tiles = wf.get_coef(cur_x, cur_y);
-
-        // Iterate through each valid direction from the current coordinate
-        auto in_bound_directions = get_in_bound_directions(cur_x, cur_y, wfh, wfw);
-        for (const Direction& dir : in_bound_directions) {
-            int other_x = cur_x + dir.x;
-            int other_y = cur_y + dir.y;
-
-            // Get the possible tiles at the adjacent location
-            Coefficient other_possible_tiles = wf.get_coef(other_x, other_y);
-            // Iterate through each tile in the adjacent location's wavefunction
-            for (const auto& other_tile : other_possible_tiles) {
-                // Check compatibility with any tile from the current location
-                bool other_tile_is_possible = std::any_of(cur_possible_tiles.begin(), cur_possible_tiles.end(),
-                    [&](const Tile& cur_tile) {
-                        BuildRule intention(cur_tile, other_tile, dir);
-                        return build_rules.find(intention) != build_rules.end();
-                    });
-
-                // If no compatibility, constrain the adjacent tile
-                if (!other_tile_is_possible) {
-                    wf.constrain(other_x, other_y, other_tile);
-                    stack.push({other_x, other_y});
-                }
-                else {
-                }
-            }
-        }
-    }
-}
-
-
-
-int main() {
-    RawInput input = {
-        {'L','L','L','L','L'},
-        {'L','C','C','L','L'},
-        {'C','S','S','C','C'},
-        {'S','S','S','S','S'},
-    };
+    RawInput input = read_input(world_file);
     
     int gen_size = 16;
-    prettyPrintMatrix(input);
+    pprint_input(input);
     
-    World matrix = convertToTileMatrix(input);
+    World world = world2input(input);
 
     // Create a vector to store the collection of build_rules
 
     Weights weights;
-    int matrix_height = matrix.size();
-    int matrix_width = matrix[0].size();
+    int matrix_height = world.size();
+    int matrix_width = world[0].size();
 
     BuildRules build_rules;
     for (int i = 0; i < matrix_height; ++i) {
             for (int j = 0; j < matrix_width; ++j) {
-                Tile tile = matrix[i][j];
-                weights[tile] +=1;
+                Tile tile = world[i][j];
+                weights[tile] = (mode=="CONSTANT") ? 1 : weights[tile] + 1;
                 auto in_bound_directions = get_in_bound_directions(i, j, matrix_height, matrix_width);
                 for (const Direction& dir : in_bound_directions){
                         int i2 = i + dir.x;
                         int j2 = j + dir.y;
-                        Tile neighbour = matrix[i2][j2];
+                        Tile neighbour = world[i2][j2];
                         BuildRule rule(tile, neighbour, dir);
                         build_rules.insert(rule);
                         build_rules.insert(rule.x_flip());
@@ -212,7 +70,7 @@ int main() {
         std::cout << rule.tile1 << " " << rule.tile2 << " " << rule.dir.as_str() << std::endl;
     }
 
-    CoefMatrix coef_matrix = getCoefMatrix(gen_size, gen_size);
+    CoefMatrix coef_matrix = init_coef_matrix(gen_size, gen_size);
     //coef_matrix[0][0] = {L};
     Wavefunction wf(coef_matrix,weights);
 
@@ -222,19 +80,19 @@ int main() {
     while (!wf.is_fully_collapsed()){
    
         // Find min entropy coords
-        Coordinate min_entropy = min_entropy_coords(wf);
+        Coordinate min_entropy = wf.min_entropy_coords();
         // Collapse
         wf.collapse(min_entropy.x, min_entropy.y);
         // propagate
-        propagate(min_entropy.x, min_entropy.y, wf, build_rules);
+        wf.propagate(min_entropy.x, min_entropy.y, build_rules);
         ++niter;
     }
     std::cout << "# Iter: " << niter << std::endl;
 
     World generation = wf.get_all_collapsed();
 
-    RawInput parsed_gen = convertToCharMatrix(generation);
-    prettyPrintMatrix(parsed_gen);
+    RawInput parsed_gen = input2world(generation);
+    pprint_input(parsed_gen);
 
     
 
